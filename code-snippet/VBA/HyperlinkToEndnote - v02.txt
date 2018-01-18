@@ -1,0 +1,29 @@
+Option Explicit
+
+Sub Main()
+   HyperlinkToEndnote()
+End Sub
+
+Sub HyperlinkToEndnote()
+    Dim hlink As Hyperlink
+    Dim linkSection As Selection
+    Dim comment As String
+    Dim x As Integer
+        
+     
+    For Each hlink In ActiveDocument.Hyperlinks
+        hlink.Follow
+        comment = Selection.Text
+        
+        With Selection
+            For x = .Hyperlinks.Count To 1 Step -1
+                .Hyperlinks(x).Delete
+            Next  ' x
+        End With   ' selection
+        Selection.Delete
+        hlink.Range.Select
+        Selection.EndnoteOptions.NumberStyle = wdNoteNumberStyleArabic
+        Selection.Endnotes.Add Range:=Selection.Range, Reference:=""
+        Selection.TypeText Text:=comment
+    Next
+End Sub

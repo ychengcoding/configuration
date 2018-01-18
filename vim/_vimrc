@@ -1,0 +1,326 @@
+" Basic {
+    " Use Vim settings, rather then Vi settings (much better!).
+    " This must be first, because it changes other options as a side effect.
+    set nocompatible
+    set noexrc              " Don't use local version of .(g)vimrc, .exerc
+    set background=dark     " Plan to use a dark background
+    syntax on               " Syntax highlighting on
+    set shortmess+=I        " Disable vim welcome screen
+    set ignorecase          " Ignore case when searching
+    set autoindent          " Always set autoindenting on
+    set incsearch
+    set hlsearch
+    colorscheme desert
+	
+    set complete-=i
+
+
+    set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+	set enc=utf8
+    set fileencoding=utf-8
+
+    " Setting up the directories {
+        set backup
+        set backupdir=D:\\bin\\sys_vim\\backup
+        set directory=D:\\bin\\sys_vim\\swap
+        set viewdir=D:\\bin\\sys_vim\\views
+       
+        "" Creating directories if they don't exist
+        "silent execute '!mkdir  $HOME/sys_vim/backup'
+        "silent execute '!mkdir  $HOME/sys_vim/swap'
+        "silent execute '!mkdir  $HOME/sys_vim/views'
+        au BufWinLeave * silent! mkview  "make vim save view (state) (folds, cursor, etc)
+        au BufWinEnter * silent! loadview "make vim load view (state) (folds, cursor, etc)
+    " }
+"}
+
+
+" General {
+    filetype plugin indent on  " Load filetype plugins/indent settings
+    filetype plugin on         " Enable filetype plugin
+
+    set backspace=indent,eol,start " Allow backspacing over everything in insert mode
+    set history=100     " Keep 100 lines of command line history
+    set hidden
+    set mouse=          " Disable the mouse
+    set noerrorbells
+    set ruler           " Show the cursor position all the time
+    set showcmd         " Display incomplete commands
+    set incsearch       " Do incremental searching
+    set number          " Set the number of line(s)
+    set showmode        " Show the mode 
+    set backup          " Keep a backup file
+"}
+
+
+
+" Statusline {
+    set laststatus=1    " Always show the statusline
+
+    " Format the statusline
+    set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %{CurDir()}\ \ \ Line:\ %l/%L:%c
+
+    function! CurDir()
+        "let curdir = substitute(getcwd(), '/home/michael', "~/", "g")
+        let curdir = substitute(getcwd(), $HOME , "~/", "")
+        return curdir
+    endfunction
+"}
+
+
+" Tab Key Settings {
+    " Don't use tab, use space instead
+    set tabstop=4
+    set softtabstop=4
+    set shiftwidth=4
+    set expandtab
+"}
+
+
+" Folding settings {
+    set foldenable
+    set foldmethod=indent
+    set foldlevel=15
+"}
+
+
+" Gvim settings {
+    set guifont=Courier_New:h16
+    set guioptions=-m
+"}
+
+
+" Ctags settings {
+    set tags=./tags;
+"}
+
+
+" General key mappings {
+    " Define leader{
+        "The default leader is '\', but many people prefer ',' as it's in a standard
+        "location
+        let mapleader = ","
+        let g:mapleader = ","
+    "}
+
+    nmap <F2>   :buffers<cr>
+    nmap <silent> <F4> :nohls<cr>
+    nmap <silent> <F12> :set number!<cr>
+    map <c-right>  <ESC>:bn<cr>
+    map <c-left>  <ESC>:bp<cr>
+
+    " Easier moving in tabs and windows
+    map <C-J> <C-W>j<C-W>_
+    map <C-K> <C-W>k<C-W>_
+    map <C-L> <C-W>l<C-W>_
+    map <C-H> <C-W>h<C-W>_
+    map <C-K> <C-W>k<C-W>_
+    " The following two lines conflict with moving to top and bottom of the screen
+    " If you prefer that functionality, comment them out.
+    " map <S-H> gT          
+    " map <S-L> gt
+
+    " Stupid shift key fixes
+    cmap W w                       
+    cmap WQ wq
+    cmap wQ wq
+    cmap Q q
+    cmap E e
+    cmap B b
+    cmap Tabe tabe
+
+    " Yank from the cursor to the end of the line, to be consistent with C and D.
+    nnoremap Y y$
+
+    " Shortcuts
+    " Change Working Directory to that of the current file
+    cmap cwd lcd %:p:h
+    cmap cd. lcd %:p:h
+
+    " visual shifting (does not exit Visual mode)
+    vnoremap < <gv
+    vnoremap > >gv
+
+    " For when you forget to sudo.. Really Write the file.
+    cmap w!! w !sudo tee % >/dev/null
+" }
+
+" General abbrevations {
+    iabbrev dts <C-R>=strftime("%Y-%m-%d")<CR>
+
+    " Tips:
+    " <C-]>, which is used to expand an abbreviation without inserting any extra characters
+    " <C-v>, which is used to suppress the expanding.!
+"}
+
+" Mappings for quickfix{
+    nmap <silent> <F5> :make<cr>
+    nmap <silent> <F8> :cn<cr>
+    nmap <silent> <F9> :cp<cr>
+"}
+
+" Fast mappings{
+    nmap <leader>w :w!<cr>
+
+    " Fast editing of the .vimrc
+    map <leader>e :e! ~/.vimrc<cr>
+
+    " When vimrc is edited, reload it
+    autocmd bufwritepost vimrc source ~/.vimrc
+"}
+
+" Settings for python{
+    autocmd FileType python set nocindent
+    "let python_highlight_all = 1
+    autocmd FileType python syn keyword pythonDecorator True None False self
+
+    autocmd BufNewFile,BufRead *.jinja set syntax=htmljinja
+    autocmd BufNewFile,BufRead *.mako set ft=mako
+
+    autocmd FileType python inoremap <buffer> $r return
+    autocmd FileType python inoremap <buffer> $i import
+    autocmd FileType python inoremap <buffer> $p print
+    autocmd FileType python map <buffer> <leader>1 /class
+    autocmd FileType python map <buffer> <leader>2 /def
+    autocmd FileType python map <buffer> <leader>C ?class
+    autocmd FileType python map <buffer> <leader>D ?def 
+
+    autocmd FileType python setlocal foldmethod=indent
+    autocmd FileType python setlocal foldlevel=15
+
+    autocmd FileType python setlocal makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
+    autocmd FileType python setlocal errorformat=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m 
+
+    iabbrev pymain if __name__ == '__main__':
+"}
+
+" JavaScript settings{
+    autocmd FileType c,javascript call CFold()
+    autocmd FileType c,javascript setlocal foldenable
+    autocmd FileType c,javascript setlocal nocindent
+    autocmd FileType c,javascript setlocal foldlevel=15
+
+    autocmd FileType javascript imap <c-a> alert();<esc>hi
+    autocmd FileType javascript inoremap <buffer> $r return
+
+    function! CFold() 
+        setlocal foldmethod=syntax
+        setlocal foldlevelstart=1
+        syntax region foldBraces start=/{/ end=/}/ transparent fold keepend extend
+
+        function! FoldText()
+            return substitute(getline(v:foldstart), '{.*', '{...}', '')
+        endfunction
+        setlocal foldtext=FoldText()
+    endfunction
+"}
+
+
+
+" Commands{
+    " Convenient command to see the difference between the current buffer and the
+    " file it was loaded from, thus the changes you made.
+    command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+            \ | wincmd p | diffthis
+
+"}
+
+
+" Settings for python{
+    " This is for the taglist plugin
+    let Tlist_Show_One_File=1
+    let Tlist_Exit_OnlyWindow=1
+
+    " Here are for the pydiction plugin
+    let g:pydiction_location = "$HOME/.vim/after/ftplugin/pydiction/complete-dict"
+    let g:pydiction_menu_height = 20
+"}
+
+
+" Settings for omnicompletion{
+    let OmniCpp_NamespaceSearch = 1
+    let OmniCpp_GlobalScopeSearch = 1
+    let OmniCpp_ShowAccess = 1
+    let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
+    let OmniCpp_MayCompleteDot = 1 " autocomplete after .
+    let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
+    let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
+    let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+    " automatically open and close the popup menu / preview window
+    au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+    set completeopt=menuone,menu,longest,preview
+"}
+
+
+function! AddFFMPEGParameters(ab, album, artist, year, track)
+   let @t = ':%s/^/ -i cover.jpg -map 0:0 -c:a libmp3lame -b:a ' . a:ab . 'k -map 1:0 -map_metadata -1 -metadata title="/'
+   exec @t
+   
+   let @t = ':%s/$/" -metadata album="' . a:album . '" -metadata artist="' .  a:artist . '"  -metadata genre="Audiobook"  -metadata date=' . a:year . ' -metadata disc=1 -metadata track='
+   exec @t
+
+   let @t = '%s/$/\=printf("%0' . a:track . 'd", line("."))/' 
+   exec @t
+
+   let @t = '%s/$/ -c:v mjpeg -b:v ' . a:ab . '000 /'
+   exec @t
+endfunction
+
+
+function! AddEscapes()
+    %s/\'/\\'/g
+    %s/&/\\&/g
+    %s/(/\\(/g
+    %s/)/\\)/g
+    %s/,/\\,/g
+    %s/;/\\;/g
+    %s/:/\\:/g
+    %s/!/\\!/g
+    %s/?/\\?/g
+endfunction
+
+
+function! ClearUnderline()
+    %s/_/ /g
+    %s/\..\{3,4}$//
+endfunction
+
+
+function! FirstFileProcess()
+    :call AddEscapes()<cr>
+    %s/^/ffmpeg -i /g
+endfunction
+
+
+function! LastFileProcess()
+    :call AddEscapes()<cr>
+    :%s/\..\{3}$/_v01.mp3/
+endfunction
+
+
+function! RenameFileProcess()
+    :call AddEscapes()<cr>
+    :%s/^/mv /
+endfunction
+
+
+function! DownloadClear() 
+    :%s/="/\r\n/g
+    :v/http/d
+    :%s/^[^a-zA-Z]//
+    :%s/".*//
+    gg"+yG
+endfunction
+
+
+" Settings for ffmpeg functions{
+    nnoremap <leader>e   :call AddEscapes()<cr>
+    nnoremap <leader>c   :call ClearUnderline()<cr>
+    nnoremap <leader>f   :call AddFFMPEGParameters(ab, "album", "artist", 2018, 2)
+    nnoremap <leader>1   :call FirstFileProcess()<cr>
+    nnoremap <leader>2   :call LastFileProcess()<cr>
+    nnoremap <leader>0   :call RenameFileProcess()<cr>
+	nnoremap <leader>d   :call DownloadClear()<cr>
+"}
+
+

@@ -1,0 +1,16 @@
+Option Explicit
+
+Sub Main()
+   HyperlinkToEndnote()
+End Sub
+
+
+Sub HyperlinkToEndnote()
+    Dim hlink As Hyperlink
+    For Each hlink In ActiveDocument.Hyperlinks
+        hlink.Range.Select
+        Selection.EndnoteOptions.NumberStyle = wdNoteNumberStyleArabic
+        Selection.Endnotes.Add Range:=Selection.Range, Reference:=""
+        Selection.TypeText Text:=hlink.Address
+    Next
+End Sub
