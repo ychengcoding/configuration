@@ -20,10 +20,10 @@
     set fileencoding=utf-8
 
     " Setting up the directories {
-        set backup
-        set backupdir=D:\\bin\\sys_vim\\backup
-        set directory=D:\\bin\\sys_vim\\swap
-        set viewdir=D:\\bin\\sys_vim\\views
+        set backup                      " backups are nice ...
+        set backupdir=D:\\bin\\sys_vim\\backup  " but not when they clog .
+        set directory=D:\\bin\\sys_vim\\swap  " same for swap files
+        set viewdir=D:\\bin\\sys_vim\\views   " same for view files
        
         "" Creating directories if they don't exist
         "silent execute '!mkdir  $HOME/sys_vim/backup'
@@ -253,7 +253,7 @@
 
 
 function! AddFFMPEGParameters(ab, album, artist, year, track)
-   let @t = ':%s/^/ -i cover.jpg -map 0:0 -c:a libmp3lame -b:a ' . a:ab . 'k -map 1:0 -map_metadata -1 -metadata title="/'
+   let @t = ':%s/^/ -i cover.jpg -map 0:0 -map_metadata -1 -c:a libmp3lame -b:a ' . a:ab . 'k -map 1:0 -map_metadata -1 -metadata title="/'
    exec @t
    
    let @t = ':%s/$/" -metadata album="' . a:album . '" -metadata artist="' .  a:artist . '"  -metadata genre="Audiobook"  -metadata date=' . a:year . ' -metadata disc=1 -metadata track='
@@ -262,8 +262,9 @@ function! AddFFMPEGParameters(ab, album, artist, year, track)
    let @t = '%s/$/\=printf("%0' . a:track . 'd", line("."))/' 
    exec @t
 
-   let @t = '%s/$/ -c:v mjpeg -b:v ' . a:ab . '000 /'
+   let @t = '%s/$/ -vcodec mjpeg -b:v ' . a:ab . '000 /'
    exec @t
+
 endfunction
 
 
@@ -279,30 +280,25 @@ function! AddEscapes()
     %s/?/\\?/g
 endfunction
 
-
 function! ClearUnderline()
     %s/_/ /g
     %s/\..\{3,4}$//
 endfunction
-
 
 function! FirstFileProcess()
     :call AddEscapes()<cr>
     %s/^/ffmpeg -i /g
 endfunction
 
-
 function! LastFileProcess()
     :call AddEscapes()<cr>
     :%s/\..\{3}$/_v01.mp3/
 endfunction
 
-
 function! RenameFileProcess()
     :call AddEscapes()<cr>
     :%s/^/mv /
 endfunction
-
 
 function! DownloadClear() 
     :%s/="/\r\n/g
@@ -312,7 +308,6 @@ function! DownloadClear()
     gg"+yG
 endfunction
 
-
 " Settings for ffmpeg functions{
     nnoremap <leader>e   :call AddEscapes()<cr>
     nnoremap <leader>c   :call ClearUnderline()<cr>
@@ -320,7 +315,7 @@ endfunction
     nnoremap <leader>1   :call FirstFileProcess()<cr>
     nnoremap <leader>2   :call LastFileProcess()<cr>
     nnoremap <leader>0   :call RenameFileProcess()<cr>
-	nnoremap <leader>d   :call DownloadClear()<cr>
+	nnoremap <leader>d :call DownloadClear()<cr>
 "}
 
 
