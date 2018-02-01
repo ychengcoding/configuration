@@ -253,7 +253,7 @@
 
 
 function! AddFFMPEGParameters(ab, album, artist, year, track)
-   let @t = ':%s/^/ -i cover.jpg -map 0:0 -map_metadata -1 -c:a libmp3lame -b:a ' . a:ab . 'k -map 1:0 -map_metadata -1 -metadata title="/'
+   let @t = ':%s/^/ -i cover.jpg  -max_muxing_queue_size 1024 -map 0:0 -map_metadata -1 -id3v2_version 3  -b:a ' . a:ab . 'k -metadata title="/'
    exec @t
    
    let @t = ':%s/$/" -metadata album="' . a:album . '" -metadata artist="' .  a:artist . '"  -metadata genre="Audiobook"  -metadata date=' . a:year . ' -metadata disc=1 -metadata track='
@@ -262,7 +262,7 @@ function! AddFFMPEGParameters(ab, album, artist, year, track)
    let @t = '%s/$/\=printf("%0' . a:track . 'd", line("."))/' 
    exec @t
 
-   let @t = '%s/$/ -vcodec mjpeg -b:v ' . a:ab . '000 /'
+   let @t = '%s/$/ -map 1:0 -map_metadata -1 -c:v mjpeg -b:v ' . a:ab . '000 /'
    exec @t
 
 endfunction
