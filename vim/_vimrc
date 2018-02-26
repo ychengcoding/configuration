@@ -18,6 +18,7 @@
     set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 	set enc=utf8
     set fileencoding=utf-8
+    set nowrap
 
     " Setting up the directories {
         set backup                      " backups are nice ...
@@ -252,8 +253,14 @@
 "}
 
 
-function! AddFFMPEGParameters(ab, album, artist, year, track)
-   let @t = ':%s/^/ -i cover.jpg  -max_muxing_queue_size 1024 -map 0:0 -map_metadata -1 -id3v2_version 3  -b:a ' . a:ab . 'k -metadata title="/'
+function! AddFFMPEGParameters(ab, album, artist, year, track, ...)
+   let l:vol = (a:0 == 1)? a:1 : 0
+
+   if l:vol > 0
+       let @t = ':%s/^/ -i cover.jpg  -max_muxing_queue_size 1024 -map 0:0 -map_metadata -1 -id3v2_version 3  -b:a ' . a:ab . 'k -af volume=' . l:vol . ' -metadata title="/'
+   else
+       let @t = ':%s/^/ -i cover.jpg  -max_muxing_queue_size 1024 -map 0:0 -map_metadata -1 -id3v2_version 3  -b:a ' . a:ab . 'k -metadata title="/'
+   endif
    exec @t
    
    let @t = ':%s/$/" -metadata album="' . a:album . '" -metadata artist="' .  a:artist . '"  -metadata genre="Audiobook"  -metadata date=' . a:year . ' -metadata disc=1 -metadata track='
